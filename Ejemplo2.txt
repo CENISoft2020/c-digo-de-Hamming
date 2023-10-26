@@ -1,0 +1,44 @@
+def hamming74_encode(data):
+    # Asegurarse de que los datos de entrada tengan 4 bits
+    if len(data) != 4:
+        raise ValueError("Los datos de entrada deben tener 4 bits.")
+
+    # Calcular bits de paridad (P1, P2, P4)
+    p1 = data[0] ^ data[1] ^ data[3]
+    p2 = data[0] ^ data[2] ^ data[3]
+    p4 = data[1] ^ data[2] ^ data[3]
+
+    # Construir palabra codificada
+    encoded_data = [p1, p2, data[0], p4, data[1], data[2], data[3]
+
+    return encoded_data
+
+def hamming74_decode(encoded_data):
+    # Asegurarse de que los datos de entrada tengan 7 bits
+    if len(encoded_data) != 7:
+        raise ValueError("Los datos de entrada codificados deben tener 7 bits.")
+
+    # Calcular bits de paridad (P1, P2, P4) y detectar errores
+    p1 = encoded_data[0]
+    p2 = encoded_data[1]
+    p4 = encoded_data[3]
+
+    error_position = p1 + p2*2 + p4*4
+
+    if error_position != 0:
+        print("Error detectado en la posición:", error_position)
+
+        # Corregir el error
+        encoded_data[error_position - 1] ^= 1
+
+    # Extraer los datos originales
+    decoded_data = [encoded_data[2], encoded_data[4], encoded_data[5], encoded_data[6]]
+
+    return decoded_data
+
+# Ejemplo de uso
+data = [1, 0, 1, 1]  # Datos de entrada
+encoded_data = hamming74_encode(data)
+print("Datos codificados:", encoded_data)
+decoded_data = hamming74_decode(encoded_data)
+print("Datos decodificados:", decoded_data)
